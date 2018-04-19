@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+    drone-server:
+        image: drone/drone:0.8.5
+        networks:
+            - web
+            - default
+        volumes:
+            - $PWD/data:/var/lib/drone
+        restart: always
+        environment:
+            - DRONE_OPEN=false
+            - DRONE_ADMIN=
+            - DRONE_GITHUB=true
+            - DRONE_GITHUB_CLIENT=
+            - DRONE_GITHUB_SECRET=
+            - DRONE_SECRET=
+            - DRONE_HOST=https://drone.blabla.io
+        expose:
+            - "8000"
+        ports:
+            - 9000:9000
+        labels:
+            - "traefik.backend=drone-ci"
+            - "traefik.docker.network=web"
+            - "traefik.frontend.rule=Host:drone.blabla.io"
+            - "traefik.port=8000"
+            - "traefik.enable=true"
+
+    drone-agent:
+        image: drone/agent:0.8.5
+        command: agent
+        restart: always
+        depends_on: [ drone-server ]
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            - DRONE_SERVER=drone-server:9000
+            - DRONE_SECRET=
+            - DRONE_HOST=https://drone.blabla.io
+        networks:
+            - default
+
+networks:
+    web:
+        external:
+            name: web

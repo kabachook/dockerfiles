@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+    dante:
+        image: schors/tgdante2
+        volumes:
+            - $PWD/etc:/etc
+        ports:
+            - 1080:1080
+        restart: unless-stopped
+        environment:
+            - USER=faux
+            - PASS=faux
+            - WORKERS=10
+        container_name: dante

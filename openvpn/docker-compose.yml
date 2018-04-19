@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+    openvpn:
+        cap_add:
+            - NET_ADMIN
+        image: kylemanna/openvpn
+        ports:
+            - "1194:1194/udp"
+        restart: always
+        volumes:
+            - ./conf:/etc/openvpn
+        container_name: openvpn
+        environment:
+            - EASYRSA_KEY_SIZE=4096
